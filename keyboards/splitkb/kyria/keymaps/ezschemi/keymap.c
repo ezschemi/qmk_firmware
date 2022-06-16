@@ -21,6 +21,7 @@ enum layers {
     _SYM,
     _FUNCTION,
     _ADJUST,
+    _NUM,
 };
 
 
@@ -62,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______, KC_Q ,  KC_W   ,  KC_F  ,   KC_P ,   KC_B ,                                                        KC_J,   KC_L ,  KC_U ,   KC_Y ,KC_SCLN, _______,
      _______, MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_R), MT(MOD_LCTL, KC_S), MT(MOD_LSFT, KC_T),   KC_G ,           KC_M,   MT(MOD_RSFT, KC_N), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_O), _______,
      _______, KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , _______,_______,                     _______, _______, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, _______,
-                                 _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), KC_DEL, _______, _______
+                                 _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), LT(_FUNCTION, KC_DEL), _______, _______
     ),
 
 /*
@@ -101,6 +102,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [_SYM] = LAYOUT(
+      KC_GRV ,   KC_1 ,   KC_2 ,   KC_3 ,   KC_4 ,   KC_5 ,                                       KC_6 ,   KC_7 ,   KC_8 ,   KC_9 ,   KC_0 , KC_EQL ,
+     KC_TILD , KC_EXLM,  KC_AT , KC_HASH,  KC_DLR, KC_PERC,                                     KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_PLUS,
+     KC_PIPE , KC_BSLS, KC_COLN, KC_SCLN, KC_MINS, KC_LBRC, KC_LCBR, _______, _______, KC_RCBR, KC_RBRC, KC_UNDS, KC_COMM,  KC_DOT, KC_SLSH, KC_QUES,
+                                 _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+    ),
+
+/*
+ * Numbers Layer: Numbers
+ *
+ * ,-------------------------------------------.                              ,-------------------------------------------.
+ * |    `   |  1   |  2   |  3   |  4   |  5   |                              |   6  |  7   |  8   |  9   |  0   |   =    |
+ * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
+ * |    ~   |  !   |  @   |  #   |  $   |  %   |                              |   ^  |  &   |  *   |  (   |  )   |   +    |
+ * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
+ * |    |   |   \  |  :   |  ;   |  -   |  [   |  {   |      |  |      |   }  |   ]  |  _   |  ,   |  .   |  /   |   ?    |
+ * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
+ *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        `----------------------------------'  `----------------------------------'
+ */
+    [_NUM] = LAYOUT(
       KC_GRV ,   KC_1 ,   KC_2 ,   KC_3 ,   KC_4 ,   KC_5 ,                                       KC_6 ,   KC_7 ,   KC_8 ,   KC_9 ,   KC_0 , KC_EQL ,
      KC_TILD , KC_EXLM,  KC_AT , KC_HASH,  KC_DLR, KC_PERC,                                     KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_PLUS,
      KC_PIPE , KC_BSLS, KC_COLN, KC_SCLN, KC_MINS, KC_LBRC, KC_LCBR, _______, _______, KC_RCBR, KC_RBRC, KC_UNDS, KC_COMM,  KC_DOT, KC_SLSH, KC_QUES,

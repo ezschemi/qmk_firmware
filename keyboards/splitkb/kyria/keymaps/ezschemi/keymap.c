@@ -297,4 +297,24 @@ void keyboard_post_init_user(void) {
   rgblight_sethsv_noeeprom(HSV_PURPLE);
   rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
 }
+
+#ifdef RGBLIGHT_LAYERS
+const rgblight_segment_t PROGMEM shift_layers[]   = RGBLIGHT_LAYER_SEGMENTS({8, 1, HSV_TEAL}, {18, 1, HSV_TEAL});
+const rgblight_segment_t PROGMEM control_layers[] = RGBLIGHT_LAYER_SEGMENTS({6, 1, HSV_RED}, {16, 1, HSV_RED});
+const rgblight_segment_t PROGMEM alt_layers[]     = RGBLIGHT_LAYER_SEGMENTS({2, 1, HSV_GREEN}, {17, 1, HSV_GREEN});
+const rgblight_segment_t PROGMEM gui_layers[]     = RGBLIGHT_LAYER_SEGMENTS({7, 1, HSV_BLUE}, {12, 1, HSV_BLUE});
+
+const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(shift_layers, control_layers, alt_layers, gui_layers);
+
+void keyboard_post_init_keymap(void) { rgblight_layers = my_rgb_layers; }
+
+void matrix_scan_keymap(void) {
+    uint8_t mods = mod_config(get_mods() | get_oneshot_mods());
+    rgblight_set_layer_state(0, mods & MOD_MASK_SHIFT);
+    rgblight_set_layer_state(1, mods & MOD_MASK_CTRL);
+    rgblight_set_layer_state(2, mods & MOD_MASK_ALT);
+    rgblight_set_layer_state(3, mods & MOD_MASK_GUI);
+}
+#endif
+
 #endif

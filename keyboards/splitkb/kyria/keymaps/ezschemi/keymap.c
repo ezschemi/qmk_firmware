@@ -16,7 +16,7 @@
 #include QMK_KEYBOARD_H
 
 enum layers {
-    _COLEMAK_DH,
+    _COLEMAK_DH = 0,
     _NAV,
     _SYM,
     _FUNCTION,
@@ -44,7 +44,6 @@ enum layers {
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-
 /*
  * Base Layer: Colemak DH
  *
@@ -65,7 +64,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______, KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , _______,_______,                     FKEYS, ADJUST, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, _______,
                                  _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), LT(_FUNCTION, KC_DEL), _______, _______
     ),
-
 /*
  * Nav Layer: Navigation
  *
@@ -126,7 +124,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, KC_KP_SLASH,    KC_KP_7, KC_KP_8, KC_KP_9, KC_KP_PLUS,                                            _______, _______, _______, _______, _______, _______,
       _______, KC_KP_ASTERISK, KC_KP_4, KC_KP_5, KC_KP_6, KC_KP_EQUAL,                                           _______, _______, _______, _______, _______, _______,
       _______, KC_KP_MINUS,    KC_KP_1, KC_KP_2, KC_KP_3, _______, _______, _______,       _______, _______, _______, _______, _______, _______, _______, _______, 
-                                  _______, _______, KC_KP_COMMA, KC_KP_0, KC_KP_DOT,       _______, _______, _______, _______, _______
+                                  _______, _______, KC_COMMA, KC_KP_0, KC_KP_DOT,       _______, _______, _______, _______, _______
     ),
 
 /*
@@ -290,6 +288,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 }
 #endif
 DELETE THIS LINE TO UNCOMMENT (2/2) */
+
 
 #ifdef RGBLIGHT_ENABLE
 void keyboard_post_init_user(void) {

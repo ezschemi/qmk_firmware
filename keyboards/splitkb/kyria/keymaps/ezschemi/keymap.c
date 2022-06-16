@@ -291,29 +291,70 @@ DELETE THIS LINE TO UNCOMMENT (2/2) */
 
 
 #ifdef RGBLIGHT_ENABLE
+
+
+#ifndef RGBLIGHT_LAYERS
 void keyboard_post_init_user(void) {
   rgblight_enable_noeeprom(); // Enables RGB, without saving settings
   rgblight_sethsv_noeeprom(HSV_PURPLE);
   rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
 }
+#endif 
 
 #ifdef RGBLIGHT_LAYERS
-const rgblight_segment_t PROGMEM shift_layers[]   = RGBLIGHT_LAYER_SEGMENTS({8, 1, HSV_TEAL}, {18, 1, HSV_TEAL});
-const rgblight_segment_t PROGMEM control_layers[] = RGBLIGHT_LAYER_SEGMENTS({6, 1, HSV_RED}, {16, 1, HSV_RED});
-const rgblight_segment_t PROGMEM alt_layers[]     = RGBLIGHT_LAYER_SEGMENTS({2, 1, HSV_GREEN}, {17, 1, HSV_GREEN});
-const rgblight_segment_t PROGMEM gui_layers[]     = RGBLIGHT_LAYER_SEGMENTS({7, 1, HSV_BLUE}, {12, 1, HSV_BLUE});
+const rgblight_segment_t PROGMEM default_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_PURPLE});
+const rgblight_segment_t PROGMEM shift_layers[]   = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_TEAL});
+const rgblight_segment_t PROGMEM control_layers[] = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_YELLOW});
+const rgblight_segment_t PROGMEM alt_layers[]     = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_GREEN});
+const rgblight_segment_t PROGMEM gui_layers[]     = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_BLUE});
 
-const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(shift_layers, control_layers, alt_layers, gui_layers);
+// const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(shift_layers, control_layers, alt_layers, gui_layers);
 
-void keyboard_post_init_keymap(void) { rgblight_layers = my_rgb_layers; }
+// void keyboard_post_init_keymap(void) { rgblight_layers = my_rgb_layers; }
 
-void matrix_scan_keymap(void) {
-    uint8_t mods = mod_config(get_mods() | get_oneshot_mods());
-    rgblight_set_layer_state(0, mods & MOD_MASK_SHIFT);
-    rgblight_set_layer_state(1, mods & MOD_MASK_CTRL);
-    rgblight_set_layer_state(2, mods & MOD_MASK_ALT);
-    rgblight_set_layer_state(3, mods & MOD_MASK_GUI);
+// void matrix_scan_keymap(void) {
+//     uint8_t mods = mod_config(get_mods() | get_oneshot_mods());
+//     rgblight_set_layer_state(0, mods & MOD_MASK_SHIFT);
+//     rgblight_set_layer_state(1, mods & MOD_MASK_CTRL);
+//     rgblight_set_layer_state(2, mods & MOD_MASK_ALT);
+//     rgblight_set_layer_state(3, mods & MOD_MASK_GUI);
+// }
+
+const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
+    default_layer,
+    shift_layers,
+    control_layers,    // Overrides caps lock layer
+    alt_layers,    // Overrides other layers
+    gui_layers     // Overrides other layers
+);
+
+void keyboard_post_init_user(void) {
+    rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+    rgblight_sethsv_noeeprom(HSV_PURPLE);
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+
+    // Enable the LED layers
+    rgblight_layers = my_rgb_layers;
 }
+
+// bool led_update_user(led_t led_state) {
+//     rgblight_set_layer_state(0, led_state.caps_lock);
+//     return true;
+// }
+
+layer_state_t default_layer_state_set_user(layer_state_t state) {
+    rgblight_set_layer_state(0, layer_state_cmp(state, _COLEMAK_DH));
+    return state;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    rgblight_set_layer_state(1, layer_state_cmp(state, _NAV));
+    rgblight_set_layer_state(2, layer_state_cmp(state, _NUM));
+    rgblight_set_layer_state(3, layer_state_cmp(state, _SYM));
+    rgblight_set_layer_state(4, layer_state_cmp(state, _FUNCTION));
+    return state;
+}
+
 #endif
 
 #endif

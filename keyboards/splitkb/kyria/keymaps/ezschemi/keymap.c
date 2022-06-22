@@ -60,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_COLEMAK_DH] = LAYOUT(
      _______, KC_Q ,  KC_W   ,  KC_F  ,   KC_P ,   KC_B ,                                                        KC_J,   KC_L ,  KC_U ,   KC_Y ,KC_QUOTE, OSM(MOD_HYPR),
-     _______, MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_R), MT(MOD_LCTL, KC_S), MT(MOD_LSFT, KC_T),   KC_G ,           KC_M,   MT(MOD_RSFT, KC_N), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_O), _______,
+     OSL(_SYM), MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_R), MT(MOD_LCTL, KC_S), MT(MOD_LSFT, KC_T),   KC_G ,           KC_M,   MT(MOD_RSFT, KC_N), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_O), _______,
      _______, KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , _______,_______,                     FKEYS, ADJUST, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, _______,
                                  _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), LT(_FUNCTION, KC_DEL), _______, _______
     ),
@@ -122,7 +122,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_NUM] = LAYOUT( 
       _______, KC_KP_SLASH,    KC_7, KC_8, KC_9, KC_KP_PLUS,                                            _______, _______, _______, _______, _______, _______,
-      _______, KC_KP_ASTERISK, KC_4, KC_5, KC_6, KC_KP_EQUAL,                                           _______, _______, _______, _______, _______, _______,
+      _______, KC_KP_ASTERISK, KC_4, KC_5, KC_6, KC_EQUAL,                                           _______, _______, _______, _______, _______, _______,
       _______, KC_KP_MINUS,    KC_1, KC_2, KC_3, _______, _______, _______,       _______, _______, _______, _______, _______, _______, _______, _______, 
                                   _______, _______, KC_COMMA, KC_0, KC_KP_DOT,       _______, _______, _______, _______, _______
     ),

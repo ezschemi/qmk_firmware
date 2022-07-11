@@ -22,8 +22,19 @@ enum layers {
     _FUNCTION,
     _ADJUST,
     _NUM,
+    _HANDS_DOWN_NEU,
 };
 
+
+// # Hands Down Neu
+// 
+// https://sites.google.com/alanreiser.com/handsdown/home/hands-down-neu
+// 
+// There is this good implementation here: https://configure.zsa.io/moonlander/layouts/VaeAr/latest/0
+// ==> Also see the layout tour!
+// 
+// For now, this implements just the alpha layer of the layout. I need to add 
+// the Combos later.
 
 // Aliases for readability
 #define COLEMAK  DF(_COLEMAK_DH)
@@ -50,7 +61,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-------------------------------------------.                              ,-------------------------------------------.
  * |        |   Q  |   W  |   F  |   P  |   B  |                              |   J  |   L  |   U  |   Y  | ' "  |OSM(Hyper)|
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+----------|
- * |        |   A  |   R  |   S  |   T  |   G  |                              |   M  |   N  |   E  |   I  |   O  |          |
+ * |OSL(SYM)|   A  |   R  |   S  |   T  |   G  |                              |   M  |   N  |   E  |   I  |   O  |          |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+----------|
  * |        |   Z  |   X  |   C  |   D  |   V  |      |      |  |      |      |   K  |   H  | ,  < | . >  | /  ? |          |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+------------------------'
@@ -62,8 +73,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______, KC_Q ,  KC_W   ,  KC_F  ,   KC_P ,   KC_B ,                                                        KC_J,   KC_L ,  KC_U ,   KC_Y ,KC_QUOTE, OSM(MOD_HYPR),
      OSL(_SYM), MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_R), MT(MOD_LCTL, KC_S), MT(MOD_LSFT, KC_T),   KC_G ,           KC_M,   MT(MOD_RSFT, KC_N), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_O), _______,
      _______, KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , _______,_______,                     FKEYS, ADJUST, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, _______,
-                                 _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), LT(_FUNCTION, KC_DEL), _______, _______
+                                 _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), KC_DEL, _______, _______
     ),
+
+/*
+ * Base Layer: Hands Down Neu
+ *
+ * ,-------------------------------------------.                              ,-------------------------------------------.
+ * |        |      |      |      |      |      |                              |      |      |      |      |      |OSM(Hyper)|
+ * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
+ * |OSL(SYM)|      |      |      |      |      |                              |      |      |      |      |      |        |
+ * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
+ * |        |      |      |      |      |      |      |      |  |      |      |      |      |      |      |      |        |
+ * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
+ *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        `----------------------------------'  `----------------------------------'
+ */
+    [_HANDS_DOWN_NEU] = LAYOUT(
+     OSL(_SYM),         KC_X,               KC_F,               KC_M,               KC_P,  KC_B ,                                                              KC_SLSH,              KC_DOT,           KC_COLON,           KC_COMMA,               KC_Q, OSM(MOD_HYPR),
+     KC_Z, MT(MOD_LGUI, KC_R), MT(MOD_LALT, KC_S), MT(MOD_LCTL, KC_N), MT(MOD_LSFT, KC_T), KC_G,                                                               KC_QUOTE, MT(MOD_RSFT, KC_A), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_H), KC_J,
+     KC_HOME,           KC_W,               KC_C,               KC_L,               KC_D,  KC_V, _______,_______,                         FKEYS,  ADJUST,      KC_MINUS,               KC_U,               KC_O,               KC_Y,               KC_K, KC_END,
+                                                              _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), KC_DEL, _______, _______
+    ),
+
 /*
  * Nav Layer: Navigation
  *
@@ -102,7 +135,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_SYM] = LAYOUT(
       _______, KC_EXCLAIM, KC_AT, KC_HASH, KC_COLON, KC_SEMICOLON,                                                                          KC_EQUAL, KC_AMPERSAND, KC_GRV, KC_TILDE, KC_PLUS, _______,
       _______, KC_BACKSLASH, KC_PIPE, KC_LEFT_CURLY_BRACE, KC_LEFT_PAREN, KC_LEFT_BRACKET,                                                  KC_ASTERISK, KC_DOLLAR, KC_PERCENT, KC_CIRCUMFLEX, KC_UNDERSCORE, _______,
-      _______, KC_MINUS, KC_UNDERSCORE, KC_RIGHT_CURLY_BRACE, KC_RIGHT_PAREN, KC_RIGHT_BRACKET, _______, _______,         _______, _______, _______, KC_EXCLAIM, KC_AT, KC_HASH, _______, _______,
+      _______, KC_MINUS, KC_UNDERSCORE, KC_RIGHT_CURLY_BRACE, KC_RIGHT_PAREN, KC_RIGHT_BRACKET, _______, _______,         _______, _______, KC_PIPE, KC_EXCLAIM, KC_AT, KC_HASH, _______, _______,
                                  _______, _______, _______, _______, _______,                                             _______, _______, _______, _______, _______
     ),
 
@@ -124,7 +157,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, KC_KP_SLASH,    KC_7, KC_8, KC_9, KC_KP_PLUS,                                            _______, _______, _______, _______, _______, _______,
       _______, KC_KP_ASTERISK, KC_4, KC_5, KC_6, KC_EQUAL,                                           _______, _______, _______, _______, _______, _______,
       _______, KC_KP_MINUS,    KC_1, KC_2, KC_3, _______, _______, _______,       _______, _______, _______, _______, _______, _______, _______, _______, 
-                                  _______, _______, KC_COMMA, KC_0, KC_KP_DOT,       _______, _______, _______, _______, _______
+                                  _______, _______, KC_COMMA, KC_0, KC_DOT,       _______, _______, _______, _______, _______
     ),
 
 /*

@@ -18,9 +18,9 @@
 
 #ifdef RGBLIGHT_ENABLE
 // #    define RGBLIGHT_ANIMATIONS
-#    define RGBLIGHT_HUE_STEP  8
-#    define RGBLIGHT_SAT_STEP  8
-#    define RGBLIGHT_VAL_STEP  8
+#    define RGBLIGHT_HUE_STEP 8
+#    define RGBLIGHT_SAT_STEP 8
+#    define RGBLIGHT_VAL_STEP 8
 #    define RGBLIGHT_LIMIT_VAL 150
 
 #    define RGBLIGHT_LAYERS
@@ -29,3 +29,9 @@
 // Lets you roll mod-tap keys
 #define IGNORE_MOD_TAP_INTERRUPT
 #define TAPPING_TERM 200
+
+// this is the correct values for the encoders I have
+#define ENCODER_RESOLUTION 2
+
+#define COMBO_VARIABLE_LEN
+#define COMBO_TERM 50

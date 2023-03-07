@@ -14,6 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "g/keymap_combo.h"
+
+// http://combos.gboards.ca/
 
 enum layers {
     _COLEMAK_DH = 0,
@@ -25,29 +28,30 @@ enum layers {
     _HANDS_DOWN_NEU,
 };
 
-
 // # Hands Down Neu
-// 
+//
 // https://sites.google.com/alanreiser.com/handsdown/home/hands-down-neu
-// 
+//
 // There is this good implementation here: https://configure.zsa.io/moonlander/layouts/VaeAr/latest/0
 // ==> Also see the layout tour!
-// 
-// For now, this implements just the alpha layer of the layout. I need to add 
+//
+// For now, this implements just the alpha layer of the layout. I need to add
 // the Combos later.
 
 // Aliases for readability
-#define COLEMAK  DF(_COLEMAK_DH)
+#define COLEMAK DF(_COLEMAK_DH)
 
-#define SYM      MO(_SYM)
-#define NAV      MO(_NAV)
-#define FKEYS    MO(_FUNCTION)
-#define ADJUST   MO(_ADJUST)
+#define SYM MO(_SYM)
+#define NAV MO(_NAV)
+#define FKEYS MO(_FUNCTION)
+#define ADJUST MO(_ADJUST)
 
-#define CTL_ESC  MT(MOD_LCTL, KC_ESC)
+#define CTL_ESC MT(MOD_LCTL, KC_ESC)
 #define CTL_QUOT MT(MOD_RCTL, KC_QUOTE)
 #define CTL_MINS MT(MOD_RCTL, KC_MINUS)
-#define ALT_ENT  MT(MOD_LALT, KC_ENT)
+#define ALT_ENT MT(MOD_LALT, KC_ENT)
+
+// static uint8_t is_ctrl_and_gui_swapped = 0;
 
 // Note: LAlt/Enter (ALT_ENT) is not the same thing as the keyboard shortcut Alt+Enter.
 // The notation `mod/tap` denotes a key that activates the modifier `mod` when held down, and
@@ -71,8 +75,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_COLEMAK_DH] = LAYOUT(
      OSM(MOD_MEH), KC_Q ,  KC_W   ,  KC_F  ,   KC_P ,   KC_B ,                                                        KC_J,   KC_L ,  KC_U ,   KC_Y ,KC_QUOTE, OSM(MOD_HYPR),
-     OSL(_SYM), MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_R), MT(MOD_LCTL, KC_S), MT(MOD_LSFT, KC_T),   KC_G ,           KC_M,   MT(MOD_RSFT, KC_N), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_O), _______,
-     _______, KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , _______,_______,                     FKEYS, ADJUST, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, _______,
+     OSL(_SYM), MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_R), MT(MOD_LCTL, KC_S), MT(MOD_LSFT, KC_T),   KC_G ,           KC_M,   MT(MOD_RSFT, KC_N), MT(MOD_RCTL, KC_E), MT(MOD_RALT, KC_I), MT(MOD_RGUI, KC_O), MAGIC_SWAP_LCTL_LGUI,
+     KC_F5, KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , _______,TG(_NUM),                     FKEYS, ADJUST, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, MAGIC_UNSWAP_LCTL_LGUI,
                                  _______, _______, KC_ESC, LT(_NAV, KC_SPC), KC_TAB,            LT(_SYM, KC_ENTER), LT(_NUM, KC_BACKSPACE), KC_DEL, _______, _______
     ),
 
@@ -224,15 +228,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //     ),
 };
 
+// void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+//     switch(keycode) {
+//         case MAGIC_TOGGLE_CTL_GUI:
+//         {
+//             // if(record->event.pressed) {
+//             //     is_ctrl_and_gui_swapped = (is_ctrl_and_gui_swapped == 0) ? 1 : 0;  
+//             // }
+//             is_ctrl_and_gui_swapped++;
+//         }
+//         break;
+//     }
+// }
+
+
 /* The default OLED and rotary encoder code can be found at the bottom of qmk_firmware/keyboards/splitkb/kyria/rev1/rev1.c
  * These default settings can be overriden by your own settings in your keymap.c
  * For your convenience, here's a copy of those settings so that you can uncomment them if you wish to apply your own modifications.
  * DO NOT edit the rev1.c file; instead override the weakly defined default functions by your own.
  */
 
-/* DELETE THIS LINE TO UNCOMMENT (1/2)
 #ifdef OLED_ENABLE
-oled_rotation_t oled_init_user(oled_rotation_t rotation) { return OLED_ROTATION_180; }
+oled_rotation_t oled_init_user(oled_rotation_t rotation) { return rotation; }
+
 
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
@@ -245,17 +263,11 @@ bool oled_task_user(void) {
         // clang-format on
 
         oled_write_P(qmk_logo, false);
-        oled_write_P(PSTR("Kyria rev1.0\n\n"), false);
+        oled_write_P(PSTR("Kyria rev2.1\n\n"), false);
 
         // Host Keyboard Layer Status
         oled_write_P(PSTR("Layer: "), false);
-        switch (get_highest_layer(layer_state|default_layer_state)) {
-            case _QWERTY:
-                oled_write_P(PSTR("QWERTY\n"), false);
-                break;
-            case _DVORAK:
-                oled_write_P(PSTR("Dvorak\n"), false);
-                break;
+        switch (get_highest_layer(layer_state)) {
             case _COLEMAK_DH:
                 oled_write_P(PSTR("Colemak-DH\n"), false);
                 break;
@@ -271,29 +283,75 @@ bool oled_task_user(void) {
             case _ADJUST:
                 oled_write_P(PSTR("Adjust\n"), false);
                 break;
+            case _NUM:
+                oled_write_P(PSTR("NUM"), false);
+                break;
+            case _HANDS_DOWN_NEU:
+                oled_write_P(PSTR("HANDS_DOWN_NEU"), false);
+                break;
             default:
                 oled_write_P(PSTR("Undefined\n"), false);
+                break;
         }
 
         // Write host Keyboard LED Status to OLEDs
         led_t led_usb_state = host_keyboard_led_state();
-        oled_write_P(led_usb_state.num_lock    ? PSTR("NUMLCK ") : PSTR("       "), false);
-        oled_write_P(led_usb_state.caps_lock   ? PSTR("CAPLCK ") : PSTR("       "), false);
+        oled_write_P(led_usb_state.num_lock ? PSTR("NUMLCK ") : PSTR("       "), false);
+        oled_write_P(led_usb_state.caps_lock ? PSTR("CAPLCK ") : PSTR("       "), false);
         oled_write_P(led_usb_state.scroll_lock ? PSTR("SCRLCK ") : PSTR("       "), false);
+
+        oled_write_P(PSTR("keymap_config: "), false);
+        oled_write(get_u8_str(keymap_config.raw, ' '), false);
+        oled_write_P(PSTR("\n"), false);
     } else {
+        // this is not the master
         // clang-format off
-        static const char PROGMEM kyria_logo[] = {
-            0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,128,192,224,240,112,120, 56, 60, 28, 30, 14, 14, 14,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7, 14, 14, 14, 30, 28, 60, 56,120,112,240,224,192,128,128,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-            0,  0,  0,  0,  0,  0,  0,192,224,240,124, 62, 31, 15,  7,  3,  1,128,192,224,240,120, 56, 60, 28, 30, 14, 14,  7,  7,135,231,127, 31,255,255, 31,127,231,135,  7,  7, 14, 14, 30, 28, 60, 56,120,240,224,192,128,  1,  3,  7, 15, 31, 62,124,240,224,192,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-            0,  0,  0,  0,240,252,255, 31,  7,  1,  0,  0,192,240,252,254,255,247,243,177,176, 48, 48, 48, 48, 48, 48, 48,120,254,135,  1,  0,  0,255,255,  0,  0,  1,135,254,120, 48, 48, 48, 48, 48, 48, 48,176,177,243,247,255,254,252,240,192,  0,  0,  1,  7, 31,255,252,240,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-            0,  0,  0,255,255,255,  0,  0,  0,  0,  0,254,255,255,  1,  1,  7, 30,120,225,129,131,131,134,134,140,140,152,152,177,183,254,248,224,255,255,224,248,254,183,177,152,152,140,140,134,134,131,131,129,225,120, 30,  7,  1,  1,255,255,254,  0,  0,  0,  0,  0,255,255,255,  0,  0,  0,  0,255,255,  0,  0,192,192, 48, 48,  0,  0,240,240,  0,  0,  0,  0,  0,  0,240,240,  0,  0,240,240,192,192, 48, 48, 48, 48,192,192,  0,  0, 48, 48,243,243,  0,  0,  0,  0,  0,  0, 48, 48, 48, 48, 48, 48,192,192,  0,  0,  0,  0,  0,
-            0,  0,  0,255,255,255,  0,  0,  0,  0,  0,127,255,255,128,128,224,120, 30,135,129,193,193, 97, 97, 49, 49, 25, 25,141,237,127, 31,  7,255,255,  7, 31,127,237,141, 25, 25, 49, 49, 97, 97,193,193,129,135, 30,120,224,128,128,255,255,127,  0,  0,  0,  0,  0,255,255,255,  0,  0,  0,  0, 63, 63,  3,  3, 12, 12, 48, 48,  0,  0,  0,  0, 51, 51, 51, 51, 51, 51, 15, 15,  0,  0, 63, 63,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 48, 48, 63, 63, 48, 48,  0,  0, 12, 12, 51, 51, 51, 51, 51, 51, 63, 63,  0,  0,  0,  0,  0,
-            0,  0,  0,  0, 15, 63,255,248,224,128,  0,  0,  3, 15, 63,127,255,239,207,141, 13, 12, 12, 12, 12, 12, 12, 12, 30,127,225,128,  0,  0,255,255,  0,  0,128,225,127, 30, 12, 12, 12, 12, 12, 12, 12, 13,141,207,239,255,127, 63, 15,  3,  0,  0,128,224,248,255, 63, 15,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-            0,  0,  0,  0,  0,  0,  0,  3,  7, 15, 62,124,248,240,224,192,128,  1,  3,  7, 15, 30, 28, 60, 56,120,112,112,224,224,225,231,254,248,255,255,248,254,231,225,224,224,112,112,120, 56, 60, 28, 30, 15,  7,  3,  1,128,192,224,240,248,124, 62, 15,  7,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-            0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  3,  7, 15, 14, 30, 28, 60, 56,120,112,112,112,224,224,224,224,224,224,224,224,224,224,224,224,224,224,224,224,112,112,112,120, 56, 60, 28, 30, 14, 15,  7,  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-        };
+            // static const char PROGMEM kyria_logo[] = {
+            //     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,128,192,224,240,112,120, 56, 60, 28, 30, 14, 14, 14,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7, 14, 14, 14, 30, 28, 60, 56,120,112,240,224,192,128,128,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            //     0,  0,  0,  0,  0,  0,  0,192,224,240,124, 62, 31, 15,  7,  3,  1,128,192,224,240,120, 56, 60, 28, 30, 14, 14,  7,  7,135,231,127, 31,255,255, 31,127,231,135,  7,  7, 14, 14, 30, 28, 60, 56,120,240,224,192,128,  1,  3,  7, 15, 31, 62,124,240,224,192,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            //     0,  0,  0,  0,240,252,255, 31,  7,  1,  0,  0,192,240,252,254,255,247,243,177,176, 48, 48, 48, 48, 48, 48, 48,120,254,135,  1,  0,  0,255,255,  0,  0,  1,135,254,120, 48, 48, 48, 48, 48, 48, 48,176,177,243,247,255,254,252,240,192,  0,  0,  1,  7, 31,255,252,240,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            //     0,  0,  0,255,255,255,  0,  0,  0,  0,  0,254,255,255,  1,  1,  7, 30,120,225,129,131,131,134,134,140,140,152,152,177,183,254,248,224,255,255,224,248,254,183,177,152,152,140,140,134,134,131,131,129,225,120, 30,  7,  1,  1,255,255,254,  0,  0,  0,  0,  0,255,255,255,  0,  0,  0,  0,255,255,  0,  0,192,192, 48, 48,  0,  0,240,240,  0,  0,  0,  0,  0,  0,240,240,  0,  0,240,240,192,192, 48, 48, 48, 48,192,192,  0,  0, 48, 48,243,243,  0,  0,  0,  0,  0,  0, 48, 48, 48, 48, 48, 48,192,192,  0,  0,  0,  0,  0,
+            //     0,  0,  0,255,255,255,  0,  0,  0,  0,  0,127,255,255,128,128,224,120, 30,135,129,193,193, 97, 97, 49, 49, 25, 25,141,237,127, 31,  7,255,255,  7, 31,127,237,141, 25, 25, 49, 49, 97, 97,193,193,129,135, 30,120,224,128,128,255,255,127,  0,  0,  0,  0,  0,255,255,255,  0,  0,  0,  0, 63, 63,  3,  3, 12, 12, 48, 48,  0,  0,  0,  0, 51, 51, 51, 51, 51, 51, 15, 15,  0,  0, 63, 63,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 48, 48, 63, 63, 48, 48,  0,  0, 12, 12, 51, 51, 51, 51, 51, 51, 63, 63,  0,  0,  0,  0,  0,
+            //     0,  0,  0,  0, 15, 63,255,248,224,128,  0,  0,  3, 15, 63,127,255,239,207,141, 13, 12, 12, 12, 12, 12, 12, 12, 30,127,225,128,  0,  0,255,255,  0,  0,128,225,127, 30, 12, 12, 12, 12, 12, 12, 12, 13,141,207,239,255,127, 63, 15,  3,  0,  0,128,224,248,255, 63, 15,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            //     0,  0,  0,  0,  0,  0,  0,  3,  7, 15, 62,124,248,240,224,192,128,  1,  3,  7, 15, 30, 28, 60, 56,120,112,112,224,224,225,231,254,248,255,255,248,254,231,225,224,224,112,112,120, 56, 60, 28, 30, 15,  7,  3,  1,128,192,224,240,248,124, 62, 15,  7,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            //     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  3,  7, 15, 14, 30, 28, 60, 56,120,112,112,112,224,224,224,224,224,224,224,224,224,224,224,224,224,224,224,224,112,112,112,120, 56, 60, 28, 30, 14, 15,  7,  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+            // };
         // clang-format on
-        oled_write_raw_P(kyria_logo, sizeof(kyria_logo));
+        // oled_write_raw_P(kyria_logo, sizeof(kyria_logo));
+
+        // if (keymap_config.swap_lctl_lgui) {
+        //     oled_write_P(PSTR("GUI and CTRL swapped: Yes\n"), false);
+        // } else {
+        //     oled_write_P(PSTR("GUI and CTRL swapped: No\n"), false);
+        // }
+        // static const char PROGMEM mac_os_off[][6]  = {{0x90, 0x91, 0x92, 0x93, 0x94, 0}, {0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0}};
+        // static const char PROGMEM mac_os_on[][6]   = {{0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0}, {0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0}};
+        // static const char PROGMEM windows_off[][6] = {{0x95, 0x96, 0x97, 0x98, 0x99, 0}, {0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0}};
+        // static const char PROGMEM windows_on[][6]  = {{0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0}, {0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0}};
+
+        oled_write_P(PSTR("keymap_config: "), false);
+        oled_write(get_u8_str(keymap_config.raw, ' '), false);
+        if (keymap_config.swap_lctl_lgui) {
+            // oled_set_cursor(10, 6);
+            // oled_write_P(windows_on[0], false);
+            // oled_set_cursor(10, 7);
+            // oled_write_P(windows_on[1], false);
+            // oled_set_cursor(10, 4);
+            // oled_write_P(mac_os_off[0], false);
+            // oled_set_cursor(10, 5);
+            // oled_write_P(mac_os_off[1], false);
+            oled_write_P(PSTR("Windows On\n"), false);
+        } else {
+            // oled_set_cursor(10, 4);
+            // oled_write_P(mac_os_on[0], false);
+            // oled_set_cursor(10, 5);
+            // oled_write_P(mac_os_on[1], false);
+            // oled_set_cursor(10, 6);
+            // oled_write_P(windows_off[0], false);
+            // oled_set_cursor(10, 7);
+            // oled_write_P(windows_off[1], false);
+            oled_write_P(PSTR("macOS On\n"), false);
+        }
     }
     return false;
 }
@@ -301,41 +359,55 @@ bool oled_task_user(void) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
-
+    // index 0 is on the left side
     if (index == 0) {
+        // up/down navigation
+        if (clockwise) {
+            // tap_code(KC_VOLU);
+            // tap_code(KC_DOWN);
+            // tap_code(KC_DOWN);
+            // tap_code(KC_DOWN);
+            tap_code(KC_MS_WH_DOWN);
+            tap_code(KC_MS_WH_DOWN);
+            tap_code(KC_MS_WH_DOWN);
+        } else {
+            // tap_code(KC_VOLD);
+            // tap_code(KC_UP);
+            // tap_code(KC_UP);
+            // tap_code(KC_UP);
+            tap_code(KC_MS_WH_UP);
+            tap_code(KC_MS_WH_UP);
+            tap_code(KC_MS_WH_UP);
+        }
+        // index 1 is on the right side
+    } else if (index == 1) {
         // Volume control
         if (clockwise) {
+            // Windows and Linux can use C(KC_TAB) for ctrl.
+            // macOS uses Meta instead.
+            // tap_code16(G(KC_TAB));
             tap_code(KC_VOLU);
         } else {
+            // tap_code16(S(G(KC_TAB)));
             tap_code(KC_VOLD);
-        }
-    } else if (index == 1) {
-        // Page up/Page down
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
         }
     }
     return false;
 }
 #endif
-DELETE THIS LINE TO UNCOMMENT (2/2) */
-
 
 #ifdef RGBLIGHT_ENABLE
 
-
-#ifndef RGBLIGHT_LAYERS
+#    ifndef RGBLIGHT_LAYERS
 void keyboard_post_init_user(void) {
-  rgblight_enable_noeeprom(); // Enables RGB, without saving settings
-  rgblight_sethsv_noeeprom(HSV_PURPLE);
-  rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+    rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+    rgblight_sethsv_noeeprom(HSV_PURPLE);
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
 }
-#endif 
+#    endif
 
-#ifdef RGBLIGHT_LAYERS
-const rgblight_segment_t PROGMEM default_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_PURPLE});
+#    ifdef RGBLIGHT_LAYERS
+const rgblight_segment_t PROGMEM default_layer[]  = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_PURPLE});
 const rgblight_segment_t PROGMEM shift_layers[]   = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_TEAL});
 const rgblight_segment_t PROGMEM control_layers[] = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_YELLOW});
 const rgblight_segment_t PROGMEM alt_layers[]     = RGBLIGHT_LAYER_SEGMENTS({0, 20, HSV_GREEN});
@@ -353,12 +425,10 @@ const rgblight_segment_t PROGMEM gui_layers[]     = RGBLIGHT_LAYER_SEGMENTS({0, 
 //     rgblight_set_layer_state(3, mods & MOD_MASK_GUI);
 // }
 
-const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
-    default_layer,
-    shift_layers,
-    control_layers,    // Overrides caps lock layer
-    alt_layers,    // Overrides other layers
-    gui_layers     // Overrides other layers
+const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(default_layer, shift_layers,
+                                                                               control_layers, // Overrides caps lock layer
+                                                                               alt_layers,     // Overrides other layers
+                                                                               gui_layers      // Overrides other layers
 );
 
 void keyboard_post_init_user(void) {
@@ -388,6 +458,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
-#endif
+#    endif
 
 #endif

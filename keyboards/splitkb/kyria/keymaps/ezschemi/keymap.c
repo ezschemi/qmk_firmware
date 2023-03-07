@@ -200,10 +200,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [_ADJUST] = LAYOUT(
-      _______, DYN_REC_START1, DYN_REC_START2, _______, DYN_REC_STOP, _______,                                    _______, _______, _______, _______,  _______, _______,
-      _______, _______, _______, DYN_MACRO_PLAY1, DYN_MACRO_PLAY2, _______,                                    RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI,  RGB_MOD, _______,
-      _______, QK_CLEAR_EEPROM, _______, COLEMAK, _______, _______,_______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
-                                 _______, _______, _______,_______, _______, _______, _______, _______, _______, _______
+      _______,  _______ ,  _______,  _______,  _______, _______,                                     _______, _______, _______, _______, _______, _______,
+      _______,  _______ ,  _______ ,  _______ ,  _______ , _______,                                     RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI, RGB_MOD, _______,
+      _______,  QK_CLEAR_EEPROM ,  _______ ,  COLEMAK ,  _______ , _______, _______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
+                                 _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
 
 // /*
@@ -240,6 +240,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //         break;
 //     }
 // }
+
+// from https://docs.splitkb.com/hc/en-us/articles/5799711553820-Power-LED
+void keyboard_pre_init_user(void) {
+  // Set our LED pin as output
+  setPinOutput(24);
+  // Turn the LED off
+  // (Due to technical reasons, high is off and low is on)
+  writePinHigh(24);
+}
 
 
 /* The default OLED and rotary encoder code can be found at the bottom of qmk_firmware/keyboards/splitkb/kyria/rev1/rev1.c

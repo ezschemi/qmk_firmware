@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "g/keymap_combo.h"
+// #include "g/keymap_combo.h"
 
 // http://combos.gboards.ca/
 
@@ -406,6 +406,15 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 #endif
 
 #ifdef RGBLIGHT_ENABLE
+void keyboard_post_init_user(void) {
+    rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+    rgblight_sethsv_noeeprom(HSV_PURPLE);
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+}
+#endif
+
+/*
+#ifdef RGBLIGHT_ENABLE
 
 #    ifndef RGBLIGHT_LAYERS
 void keyboard_post_init_user(void) {
@@ -470,3 +479,5 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    endif
 
 #endif
+
+*/
